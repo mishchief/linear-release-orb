@@ -1,0 +1,19 @@
+version: 2.1
+
+jobs:
+  test-install:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Install Linear Release CLI
+          command: bash install.sh
+      - run:
+          name: Verify installation
+          command: linear-release --version
+
+workflows:
+  test:
+    jobs:
+      - test-install
