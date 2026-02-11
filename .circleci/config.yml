@@ -8,7 +8,7 @@ jobs:
       - checkout
       - run:
           name: Install Linear Release CLI
-          command: ./install.sh
+          command: bash install.sh
       - run:
           name: Verify installation
           command: linear-release --version
