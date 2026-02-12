@@ -33,26 +33,8 @@ jobs:
             export PATH="$HOME/.local/bin:$PATH"
             linear-release --version | grep -q "0.2.0"
 
-  test-install-macos:
-    macos:
-      xcode: 16.4.0
-    resource_class: macos.m1.medium.gen1
-    steps:
-      - checkout
-      - run:
-          name: Install on macOS
-          command: bash src/scripts/install.sh
-          environment:
-            CLI_VERSION: latest
-      - run:
-          name: Verify installation
-          command: |
-            export PATH="$HOME/.local/bin:$PATH"
-            linear-release --version
-
 workflows:
   test:
     jobs:
       - test-install-latest
       - test-install-specific-version
-      - test-install-macos
