@@ -1,0 +1,51 @@
+description: |
+  Sync deployments with Linear releases.
+  By default, creates or updates a release by scanning commits for Linear issue identifiers.
+
+parameters:
+  access_key:
+    type: env_var_name
+    default: LINEAR_ACCESS_KEY
+    description: Environment variable name containing Linear pipeline access key
+  command:
+    type: enum
+    enum: ["sync", "complete", "update"]
+    default: sync
+    description: Command to run - sync, complete, or update
+  name:
+    type: string
+    default: ""
+    description: Custom release name (only used with sync command)
+  version:
+    type: string
+    default: ""
+    description: Release version identifier
+  stage:
+    type: string
+    default: ""
+    description: Deployment stage such as staging or production (required for update)
+  include_paths:
+    type: string
+    default: ""
+    description: Filter commits by file paths (comma-separated globs for monorepos)
+  cli_version:
+    type: string
+    default: "v0.2.0"
+    description: Linear Release CLI version tag to install
+
+steps:
+  - run:
+      name: Install Linear Release CLI
+      environment:
+        CLI_VERSION: << parameters.cli_version >>
+      command: << include(../scripts/install.sh) >>
+  - run:
+      name: Run Linear Release << parameters.command >>
+      command: << include(../scripts/run.sh) >>
+      environment:
+        LINEAR_ACCESS_KEY: ${<< parameters.access_key >>}
+        COMMAND: << parameters.command >>
+        INPUT_NAME: << parameters.name >>
+        INPUT_VERSION: << parameters.version >>
+        INPUT_STAGE: << parameters.stage >>
+        INPUT_INCLUDE_PATHS: << parameters.include_paths >>
