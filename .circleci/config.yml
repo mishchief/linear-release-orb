@@ -1,19 +1,57 @@
 version: 2.1
 
 jobs:
-  test-install:
+  test-install-latest:
     docker:
       - image: cimg/base:stable
     steps:
       - checkout
       - run:
-          name: Install Linear Release CLI
-          command: bash install.sh
+          name: Install latest version
+          command: bash src/scripts/install.sh
+          environment:
+            CLI_VERSION: latest
       - run:
           name: Verify installation
-          command: linear-release --version
+          command: |
+            export PATH="$HOME/.local/bin:$PATH"
+            linear-release --version
+
+  test-install-specific-version:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - run:
+          name: Install specific version
+          command: bash src/scripts/install.sh
+          environment:
+            CLI_VERSION: v0.2.0
+      - run:
+          name: Verify correct version
+          command: |
+            export PATH="$HOME/.local/bin:$PATH"
+            linear-release --version | grep -q "0.2.0"
+
+  test-install-macos:
+    macos:
+      xcode: 14.2.0
+    steps:
+      - checkout
+      - run:
+          name: Install on macOS
+          command: bash src/scripts/install.sh
+          environment:
+            CLI_VERSION: latest
+      - run:
+          name: Verify installation
+          command: |
+            export PATH="$HOME/.local/bin:$PATH"
+            linear-release --version
 
 workflows:
   test:
     jobs:
-      - test-install
+      - test-install-latest
+      - test-install-specific-version
+      - test-install-macos

@@ -1,0 +1,14 @@
+# Orb metadata
+version: 2.1
+
+description: |
+  Unofficial CircleCI orb for syncing deployments with Linear releases.
+  
+  This orb wraps the linear-release CLI tool (https://github.com/linear/linear-release)
+  to create, update, and complete Linear releases from your CircleCI pipelines.
+  
+  Maintained by the community at https://github.com/mishchief/linear-release-orb
+
+display:
+  home_url: https://github.com/mishchief/linear-release-orb
+  source_url: https://github.com/mishchief/linear-release-orb
