@@ -33,8 +33,32 @@ jobs:
             export PATH="$HOME/.local/bin:$PATH"
             linear-release --version | grep -q "0.2.0"
 
+  test-cli-sync:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout:
+          fetch-depth: 0
+      - run:
+          name: Install CLI
+          command: bash src/scripts/install.sh
+          environment:
+            CLI_VERSION: latest
+      - run:
+          name: Run sync with Linear
+          command: bash src/scripts/run.sh
+          environment:
+            LINEAR_ACCESS_KEY: ${LINEAR_ACCESS_KEY}
+            COMMAND: sync
+            INPUT_VERSION: "orb-test-${CIRCLE_SHA1:0:7}"
+            INPUT_NAME: "CircleCI Orb Test Build"
+
 workflows:
   test:
     jobs:
       - test-install-latest
       - test-install-specific-version
+      - test-cli-sync:
+          context: linear-release  # Make sure this context has LINEAR_ACCESS_KEY
+          requires:
+            - test-install-latest
