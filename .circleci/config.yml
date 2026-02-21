@@ -49,7 +49,6 @@ jobs:
           command: bash src/scripts/run.sh
           environment:
             COMMAND: sync
-            INPUT_VERSION: "orb-${CIRCLE_SHA1:0:7}"
             INPUT_NAME: "CircleCI Orb Test Build"
 
 workflows:

@@ -12,3 +12,7 @@ description: |
 display:
   home_url: https://github.com/mishchief/linear-release-orb
   source_url: https://github.com/mishchief/linear-release-orb
+
+categories:
+  - Deployment
+  - Integrations
