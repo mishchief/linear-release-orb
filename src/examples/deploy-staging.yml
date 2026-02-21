@@ -1,0 +1,41 @@
+description: |
+  Staging deployment example showing how to use the release command directly
+  with custom naming and version. This demonstrates more granular control over
+  the release syncing process with custom parameters.
+
+usage:
+  version: 2.1
+  orbs:
+    linear-release: mishchief/linear-release@1.0.0
+  
+  workflows:
+    deploy-staging:
+      jobs:
+        - build-and-test
+        - deploy-to-staging:
+            requires:
+              - build-and-test
+            filters:
+              branches:
+                only: develop
+        - sync-linear:
+            context: linear
+            requires:
+              - deploy-to-staging
+            filters:
+              branches:
+                only: develop
+  
+  jobs:
+    sync-linear:
+      docker:
+        - image: cimg/base:stable
+      steps:
+        - checkout
+        - linear-release/release:
+            command: sync
+            name: "Staging Deploy - ${CIRCLE_BRANCH}"
+            version: "staging-${CIRCLE_SHA1:0:7}"
+        - linear-release/release:
+            command: update
+            stage: staging

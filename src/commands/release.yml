@@ -1,37 +1,66 @@
 description: |
-  Sync deployments with Linear releases.
-  By default, creates or updates a release by scanning commits for Linear issue identifiers.
+  Sync deployments with Linear releases using the linear-release CLI.
+  
+  This command installs the Linear Release CLI and executes the specified command
+  to create, update, or complete releases. By default, it scans git commits for
+  Linear issue identifiers (e.g., ENG-123) and automatically associates them
+  with the release.
+  
+  Learn more: https://github.com/linear/linear-release
 
 parameters:
   access_key:
     type: env_var_name
     default: LINEAR_ACCESS_KEY
-    description: Environment variable name containing Linear pipeline access key
+    description: |
+      Environment variable name containing Linear pipeline access key.
+      Create a pipeline access key in Linear: Settings → API → Pipeline Keys
+      Store it as an environment variable in CircleCI context or project settings.
   command:
     type: enum
     enum: ["sync", "complete", "update"]
     default: sync
-    description: Command to run - sync, complete, or update
+    description: |
+      Command to run:
+      - sync: Create or update a release by scanning commits for Linear issues
+      - complete: Mark an existing release as complete
+      - update: Update release deployment stage (requires stage parameter)
   name:
     type: string
     default: ""
-    description: Custom release name (only used with sync command)
+    description: |
+      Custom release name (only used with sync command).
+      Example: "Production Deploy - v1.2.3"
+      If empty, Linear generates a name based on the current date.
   version:
     type: string
     default: ""
-    description: Release version identifier
+    description: |
+      Release version identifier.
+      Examples: "v1.2.3", "2027-01-15", "${CIRCLE_SHA1:0:7}"
+      If empty, Linear uses the current timestamp.
   stage:
     type: string
     default: ""
-    description: Deployment stage such as staging or production (required for update)
+    description: |
+      Deployment stage (required when command is "update").
+      Common values: "staging", "production", "development", "beta"
+      This marks where the release has been deployed in your pipeline.
   include_paths:
     type: string
     default: ""
-    description: Filter commits by file paths (comma-separated globs for monorepos)
+    description: |
+      Filter commits by file paths for monorepo support.
+      Provide comma-separated glob patterns to only include commits that touch specific paths.
+      Example: "packages/api/**,packages/shared/**"
+      Leave empty to include all commits.
   cli_version:
     type: string
-    default: "v0.2.0"
-    description: Linear Release CLI version tag to install
+    default: "latest"
+    description: |
+      Linear Release CLI version to install.
+      Use "latest" for the most recent stable version, or specify a version tag like "v0.2.0"
+      See available versions: https://github.com/linear/linear-release/releases
 
 steps:
   - run:

@@ -1,0 +1,22 @@
+description: |
+  Basic usage example showing how to sync a Linear release on every commit to main.
+  This will automatically scan commits for Linear issue identifiers and create/update
+  a release in Linear with the associated issues.
+
+usage:
+  version: 2.1
+  orbs:
+    linear-release: mishchief/linear-release@1.0.0
+  
+  workflows:
+    deploy:
+      jobs:
+        - build-and-test
+        - linear-release/deploy:
+            name: sync-linear-release
+            context: linear
+            requires:
+              - build-and-test
+            filters:
+              branches:
+                only: main

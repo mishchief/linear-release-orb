@@ -1,0 +1,30 @@
+description: |
+  Production deployment example showing how to sync a Linear release when deploying
+  to production. This example uses git tags for versioning and only runs on tag pushes.
+  The release is automatically marked as deployed to production stage.
+
+usage:
+  version: 2.1
+  orbs:
+    linear-release: mishchief/linear-release@1.0.0
+  
+  workflows:
+    deploy-production:
+      jobs:
+        - build-and-deploy:
+            filters:
+              tags:
+                only: /^v.*/
+              branches:
+                ignore: /.*/
+        - linear-release/deploy-on-tag:
+            name: sync-production-release
+            context: linear
+            stage: production
+            requires:
+              - build-and-deploy
+            filters:
+              tags:
+                only: /^v.*/
+              branches:
+                ignore: /.*/
