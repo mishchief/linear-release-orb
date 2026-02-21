@@ -45,18 +45,11 @@ jobs:
           environment:
             CLI_VERSION: latest
       - run:
-          name: Sync release with Linear
+          name: Sync staging release to Linear
           command: |
             export COMMAND=sync
             export INPUT_VERSION="${CIRCLE_SHA1:0:7}"
-            export INPUT_NAME="Deploy ${CIRCLE_SHA1:0:7}"
-            bash src/scripts/run.sh
-      - run:
-          name: Mark as deployed to staging
-          command: |
-            export COMMAND=update
-            export INPUT_VERSION="${CIRCLE_SHA1:0:7}"
-            export INPUT_STAGE="staging"
+            export INPUT_NAME="Staging ${CIRCLE_SHA1:0:7}"
             bash src/scripts/run.sh
 
   deploy-production:
@@ -71,11 +64,11 @@ jobs:
           environment:
             CLI_VERSION: latest
       - run:
-          name: Mark as deployed to production
+          name: Sync production release to Linear
           command: |
-            export COMMAND=update
+            export COMMAND=sync
             export INPUT_VERSION="${CIRCLE_SHA1:0:7}"
-            export INPUT_STAGE="production"
+            export INPUT_NAME="Production ${CIRCLE_SHA1:0:7}"
             bash src/scripts/run.sh
 
 workflows:
@@ -84,16 +77,14 @@ workflows:
       - test-install-latest
       - test-install-specific-version
       - deploy-staging:
-          context: linear-release
+          # Uses LINEAR_ACCESS_KEY from linear-release-stage context
+          # Runs on all branches
+          context: linear-release-stage
           requires:
             - test-install-latest
-          filters:
-            branches:
-              only: 
-                - main
-                - /MIS-.*/
       - deploy-production:
-          context: linear-release
+          # Uses LINEAR_ACCESS_KEY from linear-release-prod context
+          context: linear-release-prod
           requires:
             - deploy-staging
           filters:
