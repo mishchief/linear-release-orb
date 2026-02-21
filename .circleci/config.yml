@@ -48,7 +48,6 @@ jobs:
           name: Run sync with Linear
           command: bash src/scripts/run.sh
           environment:
-            LINEAR_ACCESS_KEY: ${LINEAR_ACCESS_KEY}
             COMMAND: sync
             INPUT_VERSION: "orb-${CIRCLE_SHA1:0:7}"
             INPUT_NAME: "CircleCI Orb Test Build"
