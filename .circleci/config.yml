@@ -48,13 +48,14 @@ jobs:
           name: Sync release with Linear
           command: |
             export COMMAND=sync
-            export INPUT_VERSION="staging-${CIRCLE_SHA1:0:7}"
-            export INPUT_NAME="Staging Deploy"
+            export INPUT_VERSION="${CIRCLE_SHA1:0:7}"
+            export INPUT_NAME="Deploy ${CIRCLE_SHA1:0:7}"
             bash src/scripts/run.sh
       - run:
           name: Mark as deployed to staging
           command: |
             export COMMAND=update
+            export INPUT_VERSION="${CIRCLE_SHA1:0:7}"
             export INPUT_STAGE="staging"
             bash src/scripts/run.sh
 
@@ -70,16 +71,10 @@ jobs:
           environment:
             CLI_VERSION: latest
       - run:
-          name: Sync release with Linear
-          command: |
-            export COMMAND=sync
-            export INPUT_VERSION="prod-${CIRCLE_SHA1:0:7}"
-            export INPUT_NAME="Production Deploy"
-            bash src/scripts/run.sh
-      - run:
           name: Mark as deployed to production
           command: |
             export COMMAND=update
+            export INPUT_VERSION="${CIRCLE_SHA1:0:7}"
             export INPUT_STAGE="production"
             bash src/scripts/run.sh
 
