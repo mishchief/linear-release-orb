@@ -33,7 +33,7 @@ jobs:
             export PATH="$HOME/.local/bin:$PATH"
             linear-release --version | grep -q "0.2.0"
 
-  test-cli-sync:
+  cli-sync:
     docker:
       - image: cimg/base:stable
     steps:
