@@ -111,3 +111,14 @@ workflows:
             - command-test-help
           context: orb-publishing
           filters: *release-filters
+      
+      # PHASE 2: Validate published production orb
+      - linear-release/deploy:
+          name: sync-production-release
+          context: linear-release-prod
+          version: "${CIRCLE_TAG}"
+          release_name: "Production Release ${CIRCLE_TAG}"
+          stage: production
+          requires:
+            - orb-tools/publish
+          filters: *release-filters

@@ -5,6 +5,7 @@ setup: true
 orbs:
   orb-tools: circleci/orb-tools@12.3
   shellcheck: circleci/shellcheck@3.2
+  linear-release: mishchief/linear-release@volatile
 
 # Use this tag to ensure test jobs always run
 filters: &filters
@@ -19,74 +20,44 @@ release-filters: &release-filters
     only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
 
 jobs:
-  test-install-latest:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - checkout
-      - run:
-          name: Install latest version
-          command: bash src/scripts/install.sh
-          environment:
-            CLI_VERSION: latest
-      - run:
-          name: Verify installation
-          command: |
-            export PATH="$HOME/.local/bin:$PATH"
-            linear-release --version
-
-  test-install-specific-version:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - checkout
-      - run:
-          name: Install specific version
-          command: bash src/scripts/install.sh
-          environment:
-            CLI_VERSION: v0.2.0
-      - run:
-          name: Verify correct version
-          command: |
-            export PATH="$HOME/.local/bin:$PATH"
-            linear-release --version | grep -q "0.2.0"
-
-  deploy-staging:
+  # PHASE 1: Test unreleased code changes before publishing
+  test-unreleased-code:
     docker:
       - image: cimg/base:stable
     steps:
       - checkout:
           fetch-depth: 0
       - run:
-          name: Install CLI
+          name: Install Linear Release CLI
           command: bash src/scripts/install.sh
           environment:
             CLI_VERSION: latest
       - run:
-          name: Sync staging release to Linear
+          name: Test sync with unreleased code
           command: |
             export COMMAND=sync
-            export INPUT_VERSION="${CIRCLE_SHA1:0:7}"
-            export INPUT_NAME="Staging ${CIRCLE_SHA1:0:7}"
+            export INPUT_VERSION="test-${CIRCLE_SHA1:0:7}-${CIRCLE_BUILD_NUM}"
+            export INPUT_NAME="Test Build ${CIRCLE_BRANCH} ${CIRCLE_SHA1:0:7}"
             bash src/scripts/run.sh
-
-  deploy-production:
+  
+  # PHASE 2: Test with dev context using unpublished source
+  test-dev-orb-with-context:
     docker:
       - image: cimg/base:stable
     steps:
       - checkout:
           fetch-depth: 0
       - run:
-          name: Install CLI
+          name: Install Linear Release CLI
           command: bash src/scripts/install.sh
           environment:
             CLI_VERSION: latest
       - run:
-          name: Sync production release to Linear
+          name: Test sync with dev context
           command: |
             export COMMAND=sync
-            export INPUT_VERSION="${CIRCLE_SHA1:0:7}"
-            export INPUT_NAME="Production ${CIRCLE_SHA1:0:7}"
+            export INPUT_VERSION="dev-${CIRCLE_SHA1:0:7}-${CIRCLE_BUILD_NUM}"
+            export INPUT_NAME="Dev Orb ${CIRCLE_SHA1:0:7}"
             bash src/scripts/run.sh
 
 workflows:
@@ -111,6 +82,16 @@ workflows:
           dir: ./src/scripts
           exclude: SC2148
       
+      # PHASE 1: Test unreleased code changes (direct script execution)
+      - test-unreleased-code:
+          context: linear-release-test
+          requires:
+            - orb-tools/lint
+            - orb-tools/pack
+            - orb-tools/review
+            - shellcheck/check
+          filters: *filters
+      
       # Publish development version for integration testing
       - orb-tools/publish:
           name: publish-dev
@@ -118,11 +99,15 @@ workflows:
           vcs_type: github
           pub_type: dev
           requires:
-            - orb-tools/lint
-            - orb-tools/pack
-            - orb-tools/review
-            - shellcheck/check
+            - test-unreleased-code
           context: orb-publishing
+          filters: *filters
+      
+      # PHASE 2: Validate published dev orb (temporarily using unpublished source)
+      - test-dev-orb-with-context:
+          context: linear-release-dev
+          requires:
+            - publish-dev
           filters: *filters
       
       # Trigger integration tests in test-deploy.yml
@@ -133,23 +118,3 @@ workflows:
           requires:
             - publish-dev
           filters: *filters
-  
-  # Legacy workflow for our own CI testing
-  test:
-    jobs:
-      - test-install-latest
-      - test-install-specific-version
-      - deploy-staging:
-          # Uses LINEAR_ACCESS_KEY from linear-release-stage context
-          # Runs on all branches
-          context: linear-release-stage
-          requires:
-            - test-install-latest
-      - deploy-production:
-          # Uses LINEAR_ACCESS_KEY from linear-release-prod context
-          context: linear-release-prod
-          requires:
-            - deploy-staging
-          filters:
-            branches:
-              only: main
