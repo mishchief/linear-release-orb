@@ -1,11 +1,11 @@
 description: |
   Sync deployments with Linear releases using the linear-release CLI.
-  
+
   This command installs the Linear Release CLI and executes the specified command
   to create, update, or complete releases. By default, it scans git commits for
   Linear issue identifiers (e.g., ENG-123) and automatically associates them
   with the release.
-  
+
   Learn more: https://github.com/linear/linear-release
 
 parameters:

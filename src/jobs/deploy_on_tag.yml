@@ -2,7 +2,7 @@ description: |
   Job to sync a Linear release using git tag as the version.
   This job automatically extracts the version from the git tag (CIRCLE_TAG)
   and syncs the release with Linear.
-  
+
   Perfect for production deployments triggered by version tags like v1.2.3.
   Automatically marks the release as deployed to the specified stage.
 

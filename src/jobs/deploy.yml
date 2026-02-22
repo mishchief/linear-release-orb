@@ -2,7 +2,7 @@ description: |
   Simple job to sync a Linear release with your deployment.
   By default, this job will checkout your code and sync a release with Linear
   by scanning commits for Linear issue identifiers.
-  
+
   This job is ideal for continuous deployment workflows where you want to
   automatically track releases in Linear without manual configuration.
 
