@@ -170,7 +170,7 @@ jobs:
       - linear-release/release:
           command: sync
           version: "v1.2.3"
-          name: "Custom Release"
+          release_name: "Custom Release"
 ```
 
 ## Configuration

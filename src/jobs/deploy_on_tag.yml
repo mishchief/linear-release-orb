@@ -46,7 +46,7 @@ steps:
   - release:
       access_key: << parameters.access_key >>
       command: sync
-      name: << parameters.release_name >>
+      release_name: << parameters.release_name >>
       version: ${CIRCLE_TAG}
       include_paths: << parameters.include_paths >>
       cli_version: << parameters.cli_version >>

@@ -34,7 +34,7 @@ usage:
         - checkout
         - linear-release/release:
             command: sync
-            name: "Staging Deploy - ${CIRCLE_BRANCH}"
+            release_name: "Staging Deploy - ${CIRCLE_BRANCH}"
             version: "staging-${CIRCLE_SHA1:0:7}"
         - linear-release/release:
             command: update

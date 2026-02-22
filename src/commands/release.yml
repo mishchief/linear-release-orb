@@ -25,7 +25,7 @@ parameters:
       - sync: Create or update a release by scanning commits for Linear issues
       - complete: Mark an existing release as complete
       - update: Update release deployment stage (requires stage parameter)
-  name:
+  release_name:
     type: string
     default: ""
     description: |
@@ -74,7 +74,7 @@ steps:
       environment:
         LINEAR_ACCESS_KEY: ${<< parameters.access_key >>}
         COMMAND: << parameters.command >>
-        INPUT_NAME: << parameters.name >>
+        INPUT_NAME: << parameters.release_name >>
         INPUT_VERSION: << parameters.version >>
         INPUT_STAGE: << parameters.stage >>
         INPUT_INCLUDE_PATHS: << parameters.include_paths >>

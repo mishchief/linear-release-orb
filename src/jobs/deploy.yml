@@ -62,7 +62,7 @@ steps:
   - release:
       access_key: << parameters.access_key >>
       command: << parameters.command >>
-      name: << parameters.release_name >>
+      release_name: << parameters.release_name >>
       version: << parameters.version >>
       stage: << parameters.stage >>
       include_paths: << parameters.include_paths >>
