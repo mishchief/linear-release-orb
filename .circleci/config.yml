@@ -133,17 +133,6 @@ workflows:
           requires:
             - publish-dev
           filters: *filters
-      
-      # Publish production version on semver tags
-      - orb-tools/publish:
-          name: publish-production
-          orb_name: mishchief/linear-release
-          vcs_type: github
-          pub_type: production
-          requires:
-            - orb-tools/continue
-          context: orb-publishing
-          filters: *release-filters
   
   # Legacy workflow for our own CI testing
   test:
