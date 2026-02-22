@@ -55,8 +55,3 @@ steps:
       command: update
       stage: << parameters.stage >>
       cli_version: << parameters.cli_version >>
-
-executors:
-  default:
-    docker:
-      - image: cimg/base:stable

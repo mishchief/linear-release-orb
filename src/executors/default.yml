@@ -1,0 +1,3 @@
+description: Default executor with latest stable base image
+docker:
+  - image: cimg/base:stable
