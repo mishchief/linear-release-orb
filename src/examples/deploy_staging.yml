@@ -33,11 +33,9 @@ usage:
       steps:
         - checkout
         - linear-release/release:
-            access_key: $LINEAR_ACCESS_KEY
             command: sync
             release_name: "Staging Deploy - ${CIRCLE_BRANCH}"
             version: "staging-${CIRCLE_SHA1:0:7}"
         - linear-release/release:
-            access_key: $LINEAR_ACCESS_KEY
             command: update
             stage: staging

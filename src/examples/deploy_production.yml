@@ -19,8 +19,7 @@ usage:
                 ignore: /.*/
         - linear-release/deploy_on_tag:
             name: sync-production-release
-            context: linear  # Context must contain LINEAR_ACCESS_KEY
-            access_key: $LINEAR_ACCESS_KEY
+            context: linear  # Context provides LINEAR_ACCESS_KEY automatically
             stage: production
             requires:
               - build-and-deploy
