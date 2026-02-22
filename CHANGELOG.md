@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Usage examples for common deployment scenarios (basic-sync, deploy-production, deploy-staging)
-- Two ready-to-use jobs: `deploy` and `deploy-on-tag` for simplified workflows
+- Two ready-to-use jobs: `deploy` and `deploy_on_tag` for simplified workflows
 - Orb categorization for better discoverability in CircleCI Orb Registry
 - Comprehensive parameter descriptions with examples and best practices
 - This CHANGELOG file to track version history

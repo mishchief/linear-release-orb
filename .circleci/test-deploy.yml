@@ -1,0 +1,113 @@
+version: 2.1
+orbs:
+  # Your orb will be automatically injected here during the pipeline.
+  # Reference your orb's jobs and commands below as they will exist when built.
+  orb-tools: circleci/orb-tools@12.3
+  # The orb definition is intentionally not included here. It will be injected into the pipeline.
+  linear-release: {}
+
+# Use this tag to ensure test jobs always run,
+# even though the downstream publish job will only run on release tags.
+filters: &filters
+  tags:
+    only: /.*/
+
+# Filter for release tags.
+release-filters: &release-filters
+  branches:
+    ignore: /.*/
+  tags:
+    only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
+
+jobs:
+  # Test: Install command with latest version
+  command-test-install-latest:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: Install Linear Release CLI (latest)
+          command: bash src/scripts/install.sh
+          environment:
+            CLI_VERSION: latest
+      - run:
+          name: Verify CLI installation
+          command: |
+            export PATH="$HOME/.local/bin:$PATH"
+            if ! command -v linear-release &> /dev/null; then
+              echo "ERROR: linear-release CLI not found"
+              exit 1
+            fi
+            echo "✓ CLI installed successfully"
+            linear-release --version
+
+  # Test: Install command with specific version
+  command-test-install-version:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: Install Linear Release CLI (v0.2.0)
+          command: bash src/scripts/install.sh
+          environment:
+            CLI_VERSION: v0.2.0
+      - run:
+          name: Verify specific version installed
+          command: |
+            export PATH="$HOME/.local/bin:$PATH"
+            if ! linear-release --version | grep -q "0.2.0"; then
+              echo "ERROR: Expected version 0.2.0"
+              exit 1
+            fi
+            echo "✓ Specific version installed correctly"
+
+  # Test: Verify command syntax and help output
+  command-test-help:
+    docker:
+      - image: cimg/base:current
+    steps:
+      - checkout
+      - run:
+          name: Install Linear Release CLI
+          command: bash src/scripts/install.sh
+          environment:
+            CLI_VERSION: latest
+      - run:
+          name: Verify command help works
+          command: |
+            export PATH="$HOME/.local/bin:$PATH"
+            linear-release --help
+            linear-release sync --help
+            echo "✓ CLI commands available and working"
+
+workflows:
+  test-deploy:
+    jobs:
+      # Command tests - test the release command with various parameters
+      - command-test-install-latest:
+          filters: *filters
+      
+      - command-test-install-version:
+          filters: *filters
+      
+      - command-test-help:
+          filters: *filters
+      
+      # Pack orb for production release
+      - orb-tools/pack:
+          filters: *release-filters
+      
+      # Publish to production registry on semver tags
+      - orb-tools/publish:
+          orb_name: mishchief/linear-release
+          vcs_type: github
+          pub_type: production
+          requires:
+            - orb-tools/pack
+            - command-test-install-latest
+            - command-test-install-version
+            - command-test-help
+          context: orb-publishing
+          filters: *release-filters

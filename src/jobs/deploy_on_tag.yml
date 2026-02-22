@@ -2,7 +2,7 @@ description: |
   Job to sync a Linear release using git tag as the version.
   This job automatically extracts the version from the git tag (CIRCLE_TAG)
   and syncs the release with Linear.
-  
+
   Perfect for production deployments triggered by version tags like v1.2.3.
   Automatically marks the release as deployed to the specified stage.
 
@@ -14,7 +14,7 @@ parameters:
     type: env_var_name
     default: LINEAR_ACCESS_KEY
     description: Environment variable name containing Linear pipeline access key
-  name:
+  release_name:
     type: string
     default: ""
     description: |
@@ -46,7 +46,7 @@ steps:
   - release:
       access_key: << parameters.access_key >>
       command: sync
-      name: << parameters.name >>
+      release_name: << parameters.release_name >>
       version: ${CIRCLE_TAG}
       include_paths: << parameters.include_paths >>
       cli_version: << parameters.cli_version >>
@@ -55,8 +55,3 @@ steps:
       command: update
       stage: << parameters.stage >>
       cli_version: << parameters.cli_version >>
-
-executors:
-  default:
-    docker:
-      - image: cimg/base:stable

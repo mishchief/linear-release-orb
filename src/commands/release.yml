@@ -1,11 +1,11 @@
 description: |
   Sync deployments with Linear releases using the linear-release CLI.
-  
+
   This command installs the Linear Release CLI and executes the specified command
   to create, update, or complete releases. By default, it scans git commits for
   Linear issue identifiers (e.g., ENG-123) and automatically associates them
   with the release.
-  
+
   Learn more: https://github.com/linear/linear-release
 
 parameters:
@@ -25,7 +25,7 @@ parameters:
       - sync: Create or update a release by scanning commits for Linear issues
       - complete: Mark an existing release as complete
       - update: Update release deployment stage (requires stage parameter)
-  name:
+  release_name:
     type: string
     default: ""
     description: |
@@ -67,14 +67,14 @@ steps:
       name: Install Linear Release CLI
       environment:
         CLI_VERSION: << parameters.cli_version >>
-      command: << include(../scripts/install.sh) >>
+      command: << include(scripts/install.sh) >>
   - run:
       name: Run Linear Release << parameters.command >>
-      command: << include(../scripts/run.sh) >>
+      command: << include(scripts/run.sh) >>
       environment:
         LINEAR_ACCESS_KEY: ${<< parameters.access_key >>}
         COMMAND: << parameters.command >>
-        INPUT_NAME: << parameters.name >>
+        INPUT_NAME: << parameters.release_name >>
         INPUT_VERSION: << parameters.version >>
         INPUT_STAGE: << parameters.stage >>
         INPUT_INCLUDE_PATHS: << parameters.include_paths >>

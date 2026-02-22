@@ -2,7 +2,7 @@ description: |
   Simple job to sync a Linear release with your deployment.
   By default, this job will checkout your code and sync a release with Linear
   by scanning commits for Linear issue identifiers.
-  
+
   This job is ideal for continuous deployment workflows where you want to
   automatically track releases in Linear without manual configuration.
 
@@ -23,7 +23,7 @@ parameters:
       - sync: Create or update a release with commits
       - complete: Mark a release as complete
       - update: Update release stage (e.g., staging, production)
-  name:
+  release_name:
     type: string
     default: ""
     description: |
@@ -62,13 +62,8 @@ steps:
   - release:
       access_key: << parameters.access_key >>
       command: << parameters.command >>
-      name: << parameters.name >>
+      release_name: << parameters.release_name >>
       version: << parameters.version >>
       stage: << parameters.stage >>
       include_paths: << parameters.include_paths >>
       cli_version: << parameters.cli_version >>
-
-executors:
-  default:
-    docker:
-      - image: cimg/base:stable
