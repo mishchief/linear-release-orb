@@ -39,6 +39,26 @@ jobs:
             export INPUT_VERSION="test-${CIRCLE_SHA1:0:7}-${CIRCLE_BUILD_NUM}"
             export INPUT_NAME="Test Build ${CIRCLE_BRANCH} ${CIRCLE_SHA1:0:7}"
             bash src/scripts/run.sh
+  
+  # PHASE 2: Test with dev context using unpublished source
+  test-dev-orb-with-context:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout:
+          fetch-depth: 0
+      - run:
+          name: Install Linear Release CLI
+          command: bash src/scripts/install.sh
+          environment:
+            CLI_VERSION: latest
+      - run:
+          name: Test sync with dev context
+          command: |
+            export COMMAND=sync
+            export INPUT_VERSION="dev-${CIRCLE_SHA1:0:7}-${CIRCLE_BUILD_NUM}"
+            export INPUT_NAME="Dev Orb ${CIRCLE_SHA1:0:7}"
+            bash src/scripts/run.sh
 
 workflows:
   # Pre-publishing validation workflow
@@ -83,13 +103,9 @@ workflows:
           context: orb-publishing
           filters: *filters
       
-      # PHASE 2: Validate published dev orb
-      - linear-release/deploy:
-          name: sync-dev-release
+      # PHASE 2: Validate published dev orb (temporarily using unpublished source)
+      - test-dev-orb-with-context:
           context: linear-release-dev
-          version: "dev-${CIRCLE_SHA1:0:7}-${CIRCLE_BUILD_NUM}"
-          release_name: "Dev Orb ${CIRCLE_SHA1:0:7}"
-          cli_version: latest
           requires:
             - publish-dev
           filters: *filters
