@@ -1,5 +1,14 @@
 version: 2.1
 
+orbs:
+  orb-tools: circleci/orb-tools@12.3
+  shellcheck: circleci/shellcheck@3.2
+
+# Use this tag to ensure test jobs always run
+filters: &filters
+  tags:
+    only: /.*/
+
 jobs:
   test-install-latest:
     docker:
@@ -72,6 +81,50 @@ jobs:
             bash src/scripts/run.sh
 
 workflows:
+  # Pre-publishing validation workflow
+  lint-pack:
+    jobs:
+      # Lint YAML
+      - orb-tools/lint:
+          filters: *filters
+      
+      # Validate orb schema
+      - orb-tools/pack:
+          filters: *filters
+      
+      # Check best practices
+      - orb-tools/review:
+          filters: *filters
+      
+      # ShellCheck bash scripts
+      - shellcheck/check:
+          filters: *filters
+          dir: ./src/scripts
+          exclude: SC2148
+      
+      # Publish development version for integration testing
+      - orb-tools/publish:
+          name: publish-dev
+          orb_name: mishchief/linear-release
+          vcs_type: github
+          pub_type: dev
+          requires:
+            - orb-tools/lint
+            - orb-tools/pack
+            - orb-tools/review
+            - shellcheck/check
+          context: orb-publishing
+          filters: *filters
+      
+      # Trigger integration tests in test-deploy.yml
+      - orb-tools/continue:
+          pipeline_number: << pipeline.number >>
+          vcs_type: github
+          requires:
+            - publish-dev
+          filters: *filters
+  
+  # Legacy workflow for our own CI testing
   test:
     jobs:
       - test-install-latest

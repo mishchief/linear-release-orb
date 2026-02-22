@@ -20,8 +20,8 @@ release-filters: &release-filters
     only: /^v[0-9]+\.[0-9]+\.[0-9]+$/
 
 jobs:
-  # Test: CLI installation with latest version
-  test-install-latest:
+  # Test: Install command with latest version
+  command-test-install-latest:
     docker:
       - image: cimg/base:current
     steps:
@@ -29,21 +29,21 @@ jobs:
       - linear-release/release:
           cli_version: latest
           command: sync
-          version: "test-dry-run"
-      # Verify CLI is installed and accessible
+          version: "test-latest"
+      # Post-step validation: verify CLI is accessible
       - run:
           name: Verify CLI installation
           command: |
             export PATH="$HOME/.local/bin:$PATH"
             if ! command -v linear-release &> /dev/null; then
-              echo "ERROR: linear-release CLI not found after installation"
+              echo "ERROR: linear-release CLI not found"
               exit 1
             fi
             echo "✓ CLI installed successfully"
             linear-release --version
 
-  # Test: CLI installation with specific version
-  test-install-version:
+  # Test: Install command with specific version
+  command-test-install-version:
     docker:
       - image: cimg/base:current
     steps:
@@ -51,54 +51,57 @@ jobs:
       - linear-release/release:
           cli_version: v0.2.0
           command: sync
-          version: "test-specific-version"
+          version: "test-v0.2.0"
+      # Post-step validation: verify correct version
       - run:
-          name: Verify specific version
+          name: Verify specific version installed
           command: |
             export PATH="$HOME/.local/bin:$PATH"
-            linear-release --version
-            # Check that v0.2.0 is installed
             if ! linear-release --version | grep -q "0.2.0"; then
               echo "ERROR: Expected version 0.2.0"
               exit 1
             fi
             echo "✓ Specific version installed correctly"
 
-  # Test: Full integration with Linear staging pipeline (requires LINEAR_ACCESS_KEY)
-  integration-test-staging:
+  # Test: Command with custom parameters
+  command-test-custom-params:
     docker:
       - image: cimg/base:current
     steps:
       - checkout:
-          fetch-depth: 0  # Need full history for commit scanning
+          fetch-depth: 0
       - linear-release/release:
           command: sync
           version: "test-${CIRCLE_SHA1:0:7}"
-          name: "Integration Test - ${CIRCLE_SHA1:0:7}"
+          name: "Custom Name Test"
+          cli_version: latest
       - run:
-          name: Verify sync succeeded
-          command: |
-            echo "✓ Integration test completed successfully"
+          name: Verify command executed
+          command: echo "✓ Command with custom params completed"
 
 workflows:
   test-deploy:
     jobs:
-      # Test jobs - run on all commits and tags
-      - test-install-latest:
+      # Command tests - test the release command with various parameters
+      - command-test-install-latest:
           filters: *filters
       
-      - test-install-version:
+      - command-test-install-version:
           filters: *filters
       
-      # Integration test - only if LINEAR_ACCESS_KEY is available
-      # This will use the linear-release-stage context for testing
-      - integration-test-staging:
+      - command-test-custom-params:
+          filters: *filters
+      
+      # Job tests - test the deploy job
+      - linear-release/deploy:
+          name: job-test-deploy
           context: linear-release-stage
+          version: "test-job-${CIRCLE_SHA1:0:7}"
           requires:
-            - test-install-latest
+            - command-test-install-latest
           filters: *filters
       
-      # Pack orb for release
+      # Pack orb for production release
       - orb-tools/pack:
           filters: *release-filters
       
@@ -109,8 +112,9 @@ workflows:
           pub_type: production
           requires:
             - orb-tools/pack
-            - test-install-latest
-            - test-install-version
-            - integration-test-staging
+            - command-test-install-latest
+            - command-test-install-version
+            - command-test-custom-params
+            - job-test-deploy
           context: orb-publishing
           filters: *release-filters
