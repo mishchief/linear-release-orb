@@ -40,7 +40,8 @@ jobs:
             export INPUT_NAME="Test Build ${CIRCLE_BRANCH} ${CIRCLE_SHA1:0:7}"
             bash src/scripts/run.sh
   
-  # PHASE 2: Test with dev context using unpublished source
+  # PHASE 2: Test with dev context using source scripts (not published orb)
+  # Used during breaking schema changes to avoid version mismatch
   test-dev-orb-with-context:
     docker:
       - image: cimg/base:stable
@@ -103,7 +104,8 @@ workflows:
           context: orb-publishing
           filters: *filters
       
-      # PHASE 2: Validate published dev orb (temporarily using unpublished source)
+      # PHASE 2: Test with dev context using source scripts
+      # Temporarily using source scripts instead of published orb due to breaking schema change
       - test-dev-orb-with-context:
           context: linear-release-dev
           requires:
