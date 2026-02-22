@@ -72,7 +72,7 @@ steps:
       name: Run Linear Release << parameters.command >>
       command: << include(scripts/run.sh) >>
       environment:
-        LINEAR_ACCESS_KEY: ${<< parameters.access_key >>}
+        LINEAR_ACCESS_KEY: << parameters.access_key >>
         COMMAND: << parameters.command >>
         INPUT_NAME: << parameters.release_name >>
         INPUT_VERSION: << parameters.version >>
