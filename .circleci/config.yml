@@ -106,7 +106,6 @@ workflows:
       
       # Publish development version for integration testing
       - orb-tools/publish:
-          name: publish-dev
           orb_name: mishchief/linear-release
           vcs_type: github
           pub_type: dev

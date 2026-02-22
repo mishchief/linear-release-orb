@@ -73,7 +73,7 @@ jobs:
       - linear-release/release:
           command: sync
           version: "test-${CIRCLE_SHA1:0:7}"
-          name: "Custom Name Test"
+          release_name: "Custom Name Test"
           cli_version: latest
       - run:
           name: Verify command executed
