@@ -14,9 +14,8 @@ parameters:
     type: string
     default: ""
     description: |
-      Linear pipeline access key value.
-      Pass the value from context using: $LINEAR_ACCESS_KEY
-      Example in workflow: access_key: $LINEAR_ACCESS_KEY
+      When using a context, LINEAR_ACCESS_KEY is automatically provided.
+      Only set this parameter if you're NOT using a context.
   release_name:
     type: string
     default: ""

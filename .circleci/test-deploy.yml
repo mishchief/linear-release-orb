@@ -115,8 +115,7 @@ workflows:
       # PHASE 2: Validate published production orb
       - linear-release/deploy:
           name: sync-production-release
-          context: linear-release-prod
-          access_key: $LINEAR_ACCESS_KEY
+          context: linear-release-prod  # Context provides LINEAR_ACCESS_KEY directly
           version: "${CIRCLE_TAG}"
           release_name: "Production Release ${CIRCLE_TAG}"
           stage: production
