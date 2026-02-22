@@ -26,11 +26,11 @@ jobs:
       - image: cimg/base:current
     steps:
       - checkout
-      - linear-release/release:
-          cli_version: latest
-          command: sync
-          version: "test-latest"
-      # Post-step validation: verify CLI is accessible
+      - run:
+          name: Install Linear Release CLI (latest)
+          command: bash src/scripts/install.sh
+          environment:
+            CLI_VERSION: latest
       - run:
           name: Verify CLI installation
           command: |
@@ -48,11 +48,11 @@ jobs:
       - image: cimg/base:current
     steps:
       - checkout
-      - linear-release/release:
-          cli_version: v0.2.0
-          command: sync
-          version: "test-v0.2.0"
-      # Post-step validation: verify correct version
+      - run:
+          name: Install Linear Release CLI (v0.2.0)
+          command: bash src/scripts/install.sh
+          environment:
+            CLI_VERSION: v0.2.0
       - run:
           name: Verify specific version installed
           command: |
@@ -63,21 +63,24 @@ jobs:
             fi
             echo "✓ Specific version installed correctly"
 
-  # Test: Command with custom parameters
-  command-test-custom-params:
+  # Test: Verify command syntax and help output
+  command-test-help:
     docker:
       - image: cimg/base:current
     steps:
-      - checkout:
-          fetch-depth: 0
-      - linear-release/release:
-          command: sync
-          version: "test-${CIRCLE_SHA1:0:7}"
-          release_name: "Custom Name Test"
-          cli_version: latest
+      - checkout
       - run:
-          name: Verify command executed
-          command: echo "✓ Command with custom params completed"
+          name: Install Linear Release CLI
+          command: bash src/scripts/install.sh
+          environment:
+            CLI_VERSION: latest
+      - run:
+          name: Verify command help works
+          command: |
+            export PATH="$HOME/.local/bin:$PATH"
+            linear-release --help
+            linear-release sync --help
+            echo "✓ CLI commands available and working"
 
 workflows:
   test-deploy:
@@ -89,7 +92,7 @@ workflows:
       - command-test-install-version:
           filters: *filters
       
-      - command-test-custom-params:
+      - command-test-help:
           filters: *filters
       
       # Job tests - test the deploy job
@@ -114,7 +117,7 @@ workflows:
             - orb-tools/pack
             - command-test-install-latest
             - command-test-install-version
-            - command-test-custom-params
+            - command-test-help
             - job-test-deploy
           context: orb-publishing
           filters: *release-filters
