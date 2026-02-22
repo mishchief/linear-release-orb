@@ -36,7 +36,7 @@ jobs:
           name: Test sync with unreleased code
           command: |
             export COMMAND=sync
-            export INPUT_VERSION="test-${CIRCLE_SHA1:0:7}"
+            export INPUT_VERSION="test-${CIRCLE_SHA1:0:7}-${CIRCLE_BUILD_NUM}"
             export INPUT_NAME="Test Build ${CIRCLE_BRANCH} ${CIRCLE_SHA1:0:7}"
             bash src/scripts/run.sh
 
@@ -87,7 +87,7 @@ workflows:
       - linear-release/deploy:
           name: sync-dev-release
           context: linear-release-dev
-          version: "dev-${CIRCLE_SHA1:0:7}"
+          version: "dev-${CIRCLE_SHA1:0:7}-${CIRCLE_BUILD_NUM}"
           release_name: "Dev Orb ${CIRCLE_SHA1:0:7}"
           cli_version: latest
           requires:
