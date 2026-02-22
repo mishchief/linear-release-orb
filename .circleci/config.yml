@@ -115,6 +115,7 @@ workflows:
           orb_name: linear-release
           pipeline_number: << pipeline.number >>
           vcs_type: github
+          context: orb-publishing
           requires:
             - publish-dev
           filters: *filters
