@@ -14,9 +14,9 @@ parameters:
     type: string
     default: ""
     description: |
-      Linear pipeline access key.
-      Pass the value from context using: $LINEAR_ACCESS_KEY
-      Example in workflow: access_key: $LINEAR_ACCESS_KEY
+      [DEPRECATED - Not needed when using contexts]
+      When using a context, LINEAR_ACCESS_KEY is automatically provided.
+      Only set this parameter if you're NOT using a context.
   command:
     type: enum
     enum: ["sync", "complete", "update"]
