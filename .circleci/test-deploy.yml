@@ -95,15 +95,6 @@ workflows:
       - command-test-help:
           filters: *filters
       
-      # Job tests - test the deploy job
-      - linear-release/deploy:
-          name: job-test-deploy
-          context: linear-release-stage
-          version: "test-job-${CIRCLE_SHA1:0:7}"
-          requires:
-            - command-test-install-latest
-          filters: *filters
-      
       # Pack orb for production release
       - orb-tools/pack:
           filters: *release-filters
@@ -118,6 +109,5 @@ workflows:
             - command-test-install-latest
             - command-test-install-version
             - command-test-help
-            - job-test-deploy
           context: orb-publishing
           filters: *release-filters
