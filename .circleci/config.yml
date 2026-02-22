@@ -120,7 +120,7 @@ workflows:
       
       # Trigger integration tests in test-deploy.yml
       - orb-tools/continue:
-          orb_name: mishchief/linear-release
+          orb_name: linear-release
           pipeline_number: << pipeline.number >>
           vcs_type: github
           requires:
