@@ -113,7 +113,7 @@ workflows:
             - build
 ```
 
-#### `deploy-on-tag`
+#### `deploy_on_tag`
 
 Automatically syncs a release using the git tag as version. Perfect for production deployments.
 
@@ -139,7 +139,7 @@ workflows:
               only: /^v.*/
             branches:
               ignore: /.*/
-      - linear-release/deploy-on-tag:
+      - linear-release/deploy_on_tag:
           context: linear-release
           requires:
             - build-and-deploy
@@ -233,9 +233,9 @@ This ensures only commits affecting the specified paths are included in the rele
 
 See the [src/examples](./src/examples) directory for complete usage examples:
 
-- **[basic-sync.yml](./src/examples/basic-sync.yml)** - Simple sync on every main branch commit
-- **[deploy-production.yml](./src/examples/deploy-production.yml)** - Production deployment triggered by git tags
-- **[deploy-staging.yml](./src/examples/deploy-staging.yml)** - Staging deployment with custom parameters
+- **[basic_sync.yml](./src/examples/basic_sync.yml)** - Simple sync on every main branch commit
+- **[deploy_production.yml](./src/examples/deploy_production.yml)** - Production deployment triggered by git tags
+- **[deploy_staging.yml](./src/examples/deploy_staging.yml)** - Staging deployment with custom parameters
 
 ## Advanced Usage
 

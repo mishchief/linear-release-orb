@@ -17,7 +17,7 @@ usage:
                 only: /^v.*/
               branches:
                 ignore: /.*/
-        - linear-release/deploy-on-tag:
+        - linear-release/deploy_on_tag:
             name: sync-production-release
             context: linear
             stage: production
