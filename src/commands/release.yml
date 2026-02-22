@@ -67,10 +67,10 @@ steps:
       name: Install Linear Release CLI
       environment:
         CLI_VERSION: << parameters.cli_version >>
-      command: << include(../scripts/install.sh) >>
+      command: << include(scripts/install.sh) >>
   - run:
       name: Run Linear Release << parameters.command >>
-      command: << include(../scripts/run.sh) >>
+      command: << include(scripts/run.sh) >>
       environment:
         LINEAR_ACCESS_KEY: ${<< parameters.access_key >>}
         COMMAND: << parameters.command >>
