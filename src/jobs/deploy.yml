@@ -23,7 +23,7 @@ parameters:
       - sync: Create or update a release with commits
       - complete: Mark a release as complete
       - update: Update release stage (e.g., staging, production)
-  name:
+  release_name:
     type: string
     default: ""
     description: |
@@ -62,7 +62,7 @@ steps:
   - release:
       access_key: << parameters.access_key >>
       command: << parameters.command >>
-      name: << parameters.name >>
+      name: << parameters.release_name >>
       version: << parameters.version >>
       stage: << parameters.stage >>
       include_paths: << parameters.include_paths >>

@@ -93,7 +93,7 @@ Simple job that syncs a release with Linear after deployment.
 |-----------|------|---------|-------------|
 | `access_key` | `env_var_name` | `LINEAR_ACCESS_KEY` | Environment variable containing Linear pipeline access key |
 | `command` | `enum` | `sync` | Command to run: `sync`, `complete`, or `update` |
-| `name` | `string` | `""` | Custom release name (e.g., "Production Deploy - v1.2.3") |
+| `release_name` | `string` | `""` | Custom release name (e.g., "Production Deploy - v1.2.3") |
 | `version` | `string` | `""` | Release version identifier (e.g., "v1.2.3" or "${CIRCLE_SHA1:0:7}") |
 | `stage` | `string` | `""` | Deployment stage (required for `update` command) |
 | `include_paths` | `string` | `""` | Filter commits by file paths (comma-separated globs) |
@@ -122,7 +122,7 @@ Automatically syncs a release using the git tag as version. Perfect for producti
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `access_key` | `env_var_name` | `LINEAR_ACCESS_KEY` | Environment variable containing Linear pipeline access key |
-| `name` | `string` | `""` | Custom release name prefix |
+| `release_name` | `string` | `""` | Custom release name prefix |
 | `stage` | `string` | `production` | Deployment stage to mark in Linear |
 | `include_paths` | `string` | `""` | Filter commits by file paths |
 | `cli_version` | `string` | `latest` | Linear Release CLI version to install |
