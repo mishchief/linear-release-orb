@@ -10,12 +10,13 @@ description: |
 
 parameters:
   access_key:
-    type: env_var_name
-    default: LINEAR_ACCESS_KEY
+    type: string
+    default: ""
     description: |
-      Environment variable name containing Linear pipeline access key.
+      Linear pipeline access key value.
       Create a pipeline access key in Linear: Settings → API → Pipeline Keys
-      Store it as an environment variable in CircleCI context or project settings.
+      Store it as LINEAR_ACCESS_KEY in a CircleCI context, then pass it as: $LINEAR_ACCESS_KEY
+      Example: access_key: $LINEAR_ACCESS_KEY
   command:
     type: enum
     enum: ["sync", "complete", "update"]

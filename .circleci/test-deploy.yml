@@ -116,6 +116,7 @@ workflows:
       - linear-release/deploy:
           name: sync-production-release
           context: linear-release-prod
+          access_key: $LINEAR_ACCESS_KEY
           version: "${CIRCLE_TAG}"
           release_name: "Production Release ${CIRCLE_TAG}"
           stage: production

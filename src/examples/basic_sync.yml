@@ -14,7 +14,8 @@ usage:
         - build-and-test
         - linear-release/deploy:
             name: sync-linear-release
-            context: linear
+            context: linear  # Context must contain LINEAR_ACCESS_KEY
+            access_key: $LINEAR_ACCESS_KEY
             requires:
               - build-and-test
             filters:

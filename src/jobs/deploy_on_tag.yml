@@ -11,9 +11,12 @@ executor:
 
 parameters:
   access_key:
-    type: env_var_name
-    default: LINEAR_ACCESS_KEY
-    description: Environment variable name containing Linear pipeline access key
+    type: string
+    default: ""
+    description: |
+      Linear pipeline access key value.
+      Pass the value from context using: $LINEAR_ACCESS_KEY
+      Example in workflow: access_key: $LINEAR_ACCESS_KEY
   release_name:
     type: string
     default: ""

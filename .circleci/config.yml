@@ -87,6 +87,7 @@ workflows:
       - linear-release/deploy:
           name: sync-dev-release
           context: linear-release-dev
+          access_key: $LINEAR_ACCESS_KEY
           version: "dev-${CIRCLE_SHA1:0:7}-${CIRCLE_BUILD_NUM}"
           release_name: "Dev Orb ${CIRCLE_SHA1:0:7}"
           cli_version: latest

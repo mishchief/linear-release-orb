@@ -10,6 +10,11 @@ if [[ -z "${LINEAR_ACCESS_KEY:-}" ]]; then
   exit 1
 fi
 
+# Debug: Show key info (masked for security)
+key_length=${#LINEAR_ACCESS_KEY}
+key_suffix="${LINEAR_ACCESS_KEY: -4}"
+echo "Debug: Access key found - length: $key_length, ends with: ****$key_suffix"
+
 # Verify CLI is installed
 if ! command -v linear-release &> /dev/null; then
   echo "Error: linear-release CLI not found. The install step may have failed." >&2
