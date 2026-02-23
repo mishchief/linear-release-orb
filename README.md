@@ -28,13 +28,15 @@ This unofficial orb wraps the [linear-release CLI](https://github.com/linear/lin
 
 ## Prerequisites
 
-- A [Linear](https://linear.app) account with release pipelines configured
+- A [Linear](https://linear.app) account with release pipelines configured (requires beta access - contact [Linear support](https://linear.app/contact) to request access)
 - Linear pipeline access keys (Settings → API → Pipeline Keys)
 - A CircleCI project
 
 ## Quick Start
 
 ### 1. Set Up Linear Pipelines
+
+> **Note:** Linear Release is in closed beta. You'll need to request access from [Linear support](https://linear.app/contact) or your account manager before you can access release pipeline settings.
 
 In Linear, navigate to **Settings → Releases** and create pipelines for your environments:
 
@@ -177,6 +179,8 @@ jobs:
 
 ### Continuous vs Scheduled Pipelines
 
+> **Note:** Linear Release is in closed beta. Request access from [Linear support](https://linear.app/contact) to use release pipelines.
+
 **Continuous Pipelines** (recommended for CD workflows):
 - Create separate pipelines for each environment (staging, production)
 - Each release appears in the pipeline immediately after deployment
@@ -190,6 +194,8 @@ jobs:
 ### Multi-Environment Setup
 
 For tracking deployments to multiple environments, create separate pipelines in Linear:
+
+> **Note:** Ensure you have access to Linear Release (closed beta). Request access from [Linear support](https://linear.app/contact) if needed.
 
 **In Linear:**
 1. Create pipeline: "my-app-staging" (Continuous) → Generate access key
